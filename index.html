@@ -577,7 +577,7 @@
       </p>
 </div>
 <!-- Stacked Form Cards with direct destination action -->
-<form action="mailto:akshatrathore884@gmail.com?subject=Wedding%20RSVP%20-%20Meenal%20%26%20Avinash" class="space-y-4 max-w-[340px] mx-auto" enctype="text/plain" id="rsvp-form" method="POST">
+<form class="space-y-4 max-w-[340px] mx-auto" id="rsvp-form">
 <!-- 1. Guest Details Card -->
 <div class="bg-white p-5 rounded-3xl shadow-luxury border border-brand-border space-y-4">
 <span class="font-serif text-base text-brand-maroon block font-medium">Your details</span>
@@ -1445,40 +1445,11 @@
     const closeModalBtn = document.getElementById('close-modal-btn');
 
     rsvpForm.addEventListener('submit', (e) => {
-      // Gather responses and open mail client / send to akshatrathore884@gmail.com
-      const name = document.getElementById('guest-name').value;
-      const phone = document.getElementById('guest-phone').value;
-      const status = attendanceStatus.value;
-      const size = document.getElementById('party-size').value;
-      const song = document.getElementById('dance-song').value;
-      const diet = document.getElementById('dietary-pref').value;
-      const advice = document.getElementById('marriage-advice').value;
+  e.preventDefault();
 
-      const mailBody = encodeURIComponent(
-        `Wedding RSVP for Amisha & Anant\n\n` +
-        `Guest Name: ${name}\n` +
-        `Phone: +91 ${phone}\n` +
-        `Attendance: ${status}\n` +
-        `Party Size: ${size}\n` +
-        `Dance Floor Song: ${song || 'None'}\n` +
-        `Dietary Preference: ${diet}\n` +
-        `Marriage Advice: ${advice || 'Best Wishes!'}\n`
-      );
-
-      // Trigger mailto intent to akshatrathore884@gmail.com
-      const mailtoUrl = `mailto:akshatrathore884@gmail.com?subject=Wedding%20RSVP%20-%20${encodeURIComponent(name)}&body=${mailBody}`;
-      
-      try {
-        const link = document.createElement('a');
-        link.href = mailtoUrl;
-        link.target = '_blank';
-        link.click();
-      } catch (err) {}
-
-      e.preventDefault();
-      rsvpModal.classList.remove('hidden');
-      rsvpModal.classList.add('flex');
-    });
+  rsvpModal.classList.remove('hidden');
+  rsvpModal.classList.add('flex');
+});
 
     closeModalBtn.addEventListener('click', () => {
       rsvpModal.classList.add('hidden');
