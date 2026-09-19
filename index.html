@@ -749,7 +749,9 @@
 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </div>
 <h4 class="font-serif text-2xl text-brand-maroon mt-3">RSVP Received!</h4>
-<p class="font-cormorant italic text-sm text-stone-600 mt-1">Thank you for confirming your presence. An RSVP has been sent to akshatrathore884@gmail.com. We cannot wait to celebrate together!</p>
+<p class="font-cormorant italic text-sm text-stone-600 mt-1">
+  Thank you for confirming your presence. Your RSVP has been received successfully. We cannot wait to celebrate together!
+</p>
 <button class="mt-5 w-full py-2.5 rounded-full bg-brand-maroon text-white text-xs tracking-widest font-semibold uppercase" id="close-modal-btn" type="button">Close</button>
 </div>
 </div>
@@ -1444,11 +1446,58 @@
     const rsvpModal = document.getElementById('rsvp-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
-    rsvpForm.addEventListener('submit', (e) => {
+    rsvpForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  rsvpModal.classList.remove('hidden');
-  rsvpModal.classList.add('flex');
+  const name = document.getElementById('guest-name').value.trim();
+  const phone = document.getElementById('guest-phone').value.trim();
+  const attendance = document.getElementById('attendance-status').value;
+  const partySize = document.getElementById('party-size').value;
+  const song = document.getElementById('dance-song').value.trim();
+  const diet = document.getElementById('dietary-pref').value;
+  const advice = document.getElementById('marriage-advice').value.trim();
+
+  const events = Array.from(
+    document.querySelectorAll('.event-check:checked')
+  )
+    .map(input => input.value)
+    .join(', ');
+
+  const data = {
+    name: name,
+    phone: phone,
+    attendance: attendance,
+    partySize: partySize,
+    events: events,
+    song: song,
+    diet: diet,
+    advice: advice
+  };
+
+  try {
+    await fetch(
+      'https://script.google.com/macros/s/AKfycbzNhX4IRqw62fPke7zTbvnFWzUaUn7hGNAMQQJpwzjOg4Rgus99OVbEA3nOICbw6PoY/exec',
+      {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(data)
+      }
+    );
+
+    rsvpModal.classList.remove('hidden');
+    rsvpModal.classList.add('flex');
+
+    rsvpForm.reset();
+
+    document.getElementById('attendance-status').value = 'Joyfully Accept';
+
+  } catch (error) {
+    console.error('RSVP submission error:', error);
+    alert('Sorry, your RSVP could not be submitted. Please try again.');
+  }
 });
 
     closeModalBtn.addEventListener('click', () => {
