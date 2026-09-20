@@ -795,95 +795,7 @@
     };
 </script>
 <!-- END: ConfigAndCoreScript -->
-<!-- BEGIN: AudioSynthesizerScript (Madhanya Wedding Folk BGM) -->
-<script data-purpose="web-audio-bgm">
-    let audioCtx = null;
-    let isPlaying = false;
-    let musicInterval = null;
-    const audioElement = document.getElementById('wedding-audio');
 
-    function initWeddingMusic() {
-      // Try natural audio element play
-      if (audioElement) {
-        audioElement.volume = 0.45;
-      }
-
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
-      if (!audioCtx) {
-        audioCtx = new AudioContext();
-      }
-
-      // Traditional Madhanya folk notes (D major / Bilawal scale tones: D, E, F#, G, A, B, C#)
-      const madhanyaMelody = [293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 554.37, 587.33];
-
-      function playFolkPluck(freq) {
-        if (!audioCtx || audioCtx.state === 'suspended') return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-        // Acoustic sitar & santoor envelope
-        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.045, audioCtx.currentTime + 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.1);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start();
-        osc.stop(audioCtx.currentTime + 2.2);
-      }
-
-      if (!musicInterval) {
-        musicInterval = setInterval(() => {
-          if (!isPlaying) return;
-          const note = madhanyaMelody[Math.floor(Math.random() * madhanyaMelody.length)];
-          playFolkPluck(note);
-        }, 1100);
-      }
-    }
-
-    function toggleMusicPlayback(forceState) {
-      if (!audioCtx) {
-        initWeddingMusic();
-      }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-
-      isPlaying = typeof forceState === 'boolean' ? forceState : !isPlaying;
-
-      if (audioElement) {
-        if (isPlaying) {
-          audioElement.play().catch(() => {});
-        } else {
-          audioElement.pause();
-        }
-      }
-
-      if (isPlaying) {
-        audioMuted.classList.add('hidden');
-        audioBars.classList.remove('hidden');
-        audioBars.classList.add('flex');
-      } else {
-        audioMuted.classList.remove('hidden');
-        audioBars.classList.remove('flex');
-        audioBars.classList.add('hidden');
-      }
-    }
-
-    const musicBtn = document.getElementById('music-toggle-btn');
-    const audioMuted = document.getElementById('audio-icon-muted');
-    const audioBars = document.getElementById('audio-icon-bars');
-
-    musicBtn.addEventListener('click', () => {
-      toggleMusicPlayback();
-    });
-</script>
-<!-- END: AudioSynthesizerScript -->
 <!-- BEGIN: VideoIntroAndScratchInteractivity -->
 <script data-purpose="video-intro-and-scratch">
     // Video Envelope Unboxing Intro auto-advance and dismiss
@@ -896,7 +808,7 @@
       introOverlay.dataset.dismissed = "true";
       
       // Auto start ambient wedding music seamlessly
-      toggleMusicPlayback(true);
+      playWeddingMusic();
 
       introOverlay.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
       introOverlay.style.opacity = '0';
